@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Replace your-domain.ru with the production domain after deployment.
+Sitemap: https://your-domain.ru/sitemap.xml
