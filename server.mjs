@@ -39,31 +39,15 @@ app.use(
         imgSrc: ["'self'", "data:"],
         objectSrc: ["'none'"],
         scriptSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrcElem: ["'self'"],
         styleSrc: ["'self'", "'unsafe-inline'"],
+        styleSrcElem: ["'self'", "'unsafe-inline'"],
       },
     },
   }),
 );
 
-app.use(
-  cors({
-    origin(origin, callback) {
-      if (!origin) {
-        callback(null, true);
-        return;
-      }
-
-      const allowedOrigins = getAllowedOrigins();
-
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-        return;
-      }
-
-      callback(new Error("Origin is not allowed by CORS"));
-    },
-  }),
-);
+app.use("/api", cors(getApiCorsOptions));
 
 app.use(
   express.json({
@@ -187,6 +171,32 @@ function getAllowedOrigins() {
   }
 
   return ["http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:5173", "http://127.0.0.1:5173"];
+}
+
+function getApiCorsOptions(request, callback) {
+  const origin = request.get("origin");
+
+  if (!origin) {
+    callback(null, { origin: false });
+    return;
+  }
+
+  const requestHost = request.get("host");
+  let isSameOrigin = false;
+
+  try {
+    isSameOrigin = new URL(origin).host === requestHost;
+  } catch {
+    callback(new Error("Invalid Origin header"));
+    return;
+  }
+
+  if (isSameOrigin || getAllowedOrigins().includes(origin)) {
+    callback(null, { origin: true });
+    return;
+  }
+
+  callback(new Error("Origin is not allowed by CORS"));
 }
 
 function requireJsonContentType(request, response, next) {
