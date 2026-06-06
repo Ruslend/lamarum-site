@@ -5,19 +5,27 @@ import express from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import { existsSync } from "node:fs";
-import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = fileURLToPath(new URL(".", import.meta.url));
 const distDir = join(root, "dist");
-const publicDir = existsSync(distDir) ? distDir : root;
+const distAssetsDir = join(distDir, "assets");
+const publicDir = join(root, "public");
+const indexFile = join(distDir, "index.html");
 const port = Number(process.env.PORT || 3000);
 const isProduction = process.env.NODE_ENV === "production";
+const staticOptions = {
+  dotfiles: "ignore",
+  fallthrough: true,
+  index: false,
+  maxAge: isProduction ? "1d" : 0,
+};
 
 const app = express();
 
 app.disable("x-powered-by");
+app.set("trust proxy", 1);
 
 app.use(
   helmet({
@@ -75,6 +83,10 @@ const leadLimiter = rateLimit({
   },
 });
 
+app.get("/health", (_request, response) => {
+  response.status(200).type("text").send("OK");
+});
+
 app.post("/api/lead", requireJsonContentType, leadLimiter, async (request, response) => {
   const validation = validateLead(request.body);
 
@@ -110,16 +122,19 @@ app.all("/api/lead", (_request, response) => {
   });
 });
 
-app.use(express.static(publicDir, { dotfiles: "ignore" }));
-
-if (!existsSync(distDir)) {
-  app.use("/src", express.static(join(root, "src"), { dotfiles: "ignore" }));
-}
-
-app.get("*", async (_request, response) => {
-  const fallbackFile = existsSync(distDir) ? join(distDir, "index.html") : join(root, "preview.html");
-  response.type("html").send(await readFile(fallbackFile, "utf-8"));
+app.use("/api", (_request, response) => {
+  response.status(404).json({
+    ok: false,
+    message: "API route not found.",
+  });
 });
+
+app.use("/assets", express.static(distAssetsDir, staticOptions));
+app.use(express.static(distDir, staticOptions));
+app.use(express.static(publicDir, staticOptions));
+
+app.get("/", sendFrontend);
+app.get("*", sendFrontend);
 
 app.use((error, _request, response, _next) => {
   if (!isProduction) {
@@ -143,6 +158,19 @@ app.use((error, _request, response, _next) => {
 app.listen(port, "0.0.0.0", () => {
   console.log(`Ламарум server: http://localhost:${port}/`);
 });
+
+function sendFrontend(_request, response, next) {
+  if (!existsSync(indexFile)) {
+    response.status(503).type("text").send("Frontend build not found. Run npm run build.");
+    return;
+  }
+
+  response.sendFile(indexFile, (error) => {
+    if (error) {
+      next(error);
+    }
+  });
+}
 
 function getAllowedOrigins() {
   const configured = (process.env.ALLOWED_ORIGINS || "")
