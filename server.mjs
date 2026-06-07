@@ -4,10 +4,10 @@ import cors from "cors";
 import express from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
-import { timingSafeEqual } from "node:crypto";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { requireAdminAuth } from "./admin-auth.mjs";
 import { submitApplication } from "./application-service.mjs";
 import { createApplication, initializeDatabase, listApplications } from "./db.mjs";
 
@@ -232,44 +232,6 @@ function requireJsonContentType(request, response, next) {
   }
 
   next();
-}
-
-function requireAdminAuth(request, response, next) {
-  const adminPassword = process.env.ADMIN_PASSWORD;
-
-  if (!adminPassword) {
-    response.status(503).type("text").send("Админ-страница не настроена.");
-    return;
-  }
-
-  const authorization = request.get("authorization") || "";
-  const [scheme, encodedCredentials] = authorization.split(" ");
-  let credentials = "";
-
-  try {
-    credentials = Buffer.from(encodedCredentials || "", "base64").toString("utf8");
-  } catch {
-    credentials = "";
-  }
-
-  const separatorIndex = credentials.indexOf(":");
-  const username = separatorIndex >= 0 ? credentials.slice(0, separatorIndex) : "";
-  const password = separatorIndex >= 0 ? credentials.slice(separatorIndex + 1) : "";
-
-  if (scheme !== "Basic" || username !== "admin" || !safeEqual(password, adminPassword)) {
-    response.set("WWW-Authenticate", 'Basic realm="Ламарум заявки", charset="UTF-8"');
-    response.status(401).type("text").send("Требуется авторизация.");
-    return;
-  }
-
-  next();
-}
-
-function safeEqual(actual, expected) {
-  const actualBuffer = Buffer.from(String(actual));
-  const expectedBuffer = Buffer.from(String(expected));
-
-  return actualBuffer.length === expectedBuffer.length && timingSafeEqual(actualBuffer, expectedBuffer);
 }
 
 function normalizeText(value) {
