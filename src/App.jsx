@@ -418,15 +418,17 @@ function LeadForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+      const result = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        throw new Error("Request failed");
+        setStatus(result.message || "Не удалось отправить заявку. Попробуйте ещё раз позже.");
+        return;
       }
 
       setStatus("Заявка отправлена. Мы скоро свяжемся с вами в Telegram.");
       form.reset();
     } catch {
-      setStatus("Не удалось отправить заявку. Напишите напрямую в Telegram: @ruslannzz.");
+      setStatus("Не удалось отправить заявку. Попробуйте ещё раз позже.");
     } finally {
       setIsSubmitting(false);
     }
@@ -452,11 +454,11 @@ function LeadForm() {
         <form className="lead-form" onSubmit={handleSubmit}>
           <label>
             Имя
-            <input name="name" type="text" placeholder="Как к вам обращаться" required />
+            <input name="name" type="text" minLength="2" maxLength="60" placeholder="Как к вам обращаться" required />
           </label>
           <label>
             Telegram для связи
-            <input name="contact" type="text" placeholder="@username" required />
+            <input name="contact" type="text" minLength="3" maxLength="80" placeholder="@username" required />
           </label>
           <label>
             Класс ученика
@@ -470,8 +472,15 @@ function LeadForm() {
             </select>
           </label>
           <label>
-            Комментарий
-            <textarea name="comment" rows="4" placeholder="Что сейчас сложнее всего?" required />
+            Цель обучения
+            <textarea
+              name="goal"
+              rows="4"
+              minLength="2"
+              maxLength="1000"
+              placeholder="Что хотите улучшить или к какому результату прийти?"
+              required
+            />
           </label>
           <label className="hp-field" aria-hidden="true">
             Сайт
