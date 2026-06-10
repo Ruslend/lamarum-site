@@ -85,9 +85,14 @@ http://localhost:3000/admin
 После каждого обновления установите зависимости, пересоберите `dist` и перезапустите PM2:
 
 ```bash
+cd /var/www/lamarum-site
 npm install
 npm run build
-pm2 restart lamarum-site
+pm2 delete lamarum-site
+pm2 start ecosystem.config.cjs
+pm2 save
 ```
+
+`ecosystem.config.cjs` фиксирует рабочий каталог `/var/www/lamarum-site`, запускает `server.mjs` через Node.js с загрузкой `.env` и задаёт `NODE_ENV=production`.
 
 Nginx должен проксировать запросы без изменения пути на `http://127.0.0.1:3000`. Пока сайт доступен по HTTP-IP, CSP сервера не включает `upgrade-insecure-requests`, иначе браузер попытается загрузить `/assets/*` по недоступному HTTPS. После подключения домена и TLS настройте перенаправление с HTTP на HTTPS в Nginx.
