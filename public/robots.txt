@@ -1,5 +1,3 @@
-User-agent: *
+﻿User-agent: *
 Allow: /
-
-# Replace your-domain.ru with the production domain after deployment.
-Sitemap: https://your-domain.ru/sitemap.xml
+Sitemap: https://lamarum-site.onrender.com/sitemap.xml
