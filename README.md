@@ -79,3 +79,15 @@ http://localhost:3000/admin
 Для Render можно использовать `render.yaml`: Blueprint создаст PostgreSQL-базу и автоматически передаст её строку подключения в `DATABASE_URL`. Telegram-переменные и `ADMIN_PASSWORD` задайте вручную. Для Railway добавьте PostgreSQL-сервис и передайте его строку подключения в `DATABASE_URL`.
 
 Администратор должен один раз открыть Telegram-бота и нажать `/start`, иначе Telegram не позволит боту написать первым.
+
+### VPS с PM2 и Nginx
+
+После каждого обновления установите зависимости, пересоберите `dist` и перезапустите PM2:
+
+```bash
+npm install
+npm run build
+pm2 restart lamarum-site
+```
+
+Nginx должен проксировать запросы без изменения пути на `http://127.0.0.1:3000`. Пока сайт доступен по HTTP-IP, CSP сервера не включает `upgrade-insecure-requests`, иначе браузер попытается загрузить `/assets/*` по недоступному HTTPS. После подключения домена и TLS настройте перенаправление с HTTP на HTTPS в Nginx.

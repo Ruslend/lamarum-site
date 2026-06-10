@@ -5,12 +5,13 @@ import express from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import { existsSync } from "node:fs";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { requireAdminAuth } from "./admin-auth.mjs";
 import { submitApplication } from "./application-service.mjs";
 import { createApplication, initializeDatabase, listApplications } from "./db.mjs";
 
+const serverFile = fileURLToPath(import.meta.url);
 const root = fileURLToPath(new URL(".", import.meta.url));
 const distDir = join(root, "dist");
 const distAssetsDir = join(distDir, "assets");
@@ -45,6 +46,7 @@ app.use(
         scriptSrcElem: ["'self'"],
         styleSrc: ["'self'", "'unsafe-inline'"],
         styleSrcElem: ["'self'", "'unsafe-inline'"],
+        upgradeInsecureRequests: null,
       },
     },
   }),
@@ -132,6 +134,9 @@ app.use("/api", (_request, response) => {
 });
 
 app.use("/assets", express.static(distAssetsDir, staticOptions));
+app.use("/assets", (_request, response) => {
+  response.status(404).type("text").send("Asset not found.");
+});
 app.use(express.static(distDir, staticOptions));
 app.use(express.static(publicDir, staticOptions));
 
@@ -155,7 +160,11 @@ app.use((error, _request, response, _next) => {
   });
 });
 
-startServer();
+if (process.argv[1] && resolve(process.argv[1]) === serverFile) {
+  startServer();
+}
+
+export { app, startServer };
 
 async function startServer() {
   try {
