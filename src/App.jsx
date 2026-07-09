@@ -1,17 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowRight,
   BookOpen,
   CalendarCheck,
+  CalendarDays,
   CheckCircle2,
   ChevronRight,
   CircleHelp,
+  Clock3,
   ClipboardCheck,
+  FileText,
   GraduationCap,
   Laptop,
+  ListChecks,
   Menu,
   MessageCircle,
   Send,
+  ShieldCheck,
   Sparkles,
   Target,
 } from "lucide-react";
@@ -20,16 +25,19 @@ import {
   audiences,
   benefits,
   courses,
+  examTopics,
   faqs,
   navItems,
+  ogeFormats,
+  preparationRoadmap,
   prices,
-  programTopics,
   reasons,
   reviews,
   steps,
 } from "./data.js";
 
 const iconMap = [Laptop, Target, ClipboardCheck, GraduationCap];
+const scheduleUnavailableMessage = "Расписание временно недоступно. Можно записаться через Telegram";
 
 function LogoMark({ compact = false }) {
   return (
@@ -103,7 +111,7 @@ function Header() {
         ))}
       </nav>
 
-      <a className="header-cta" href="#lead">
+      <a className="header-cta" href="#schedule">
         Записаться
         <ChevronRight size={18} aria-hidden="true" />
       </a>
@@ -118,7 +126,7 @@ function Header() {
               {item.label}
             </a>
           ))}
-          <a className="mobile-cta" href="#lead">
+          <a className="mobile-cta" href="#schedule">
             Записаться
           </a>
         </div>
@@ -143,7 +151,7 @@ function Hero() {
           и уверенно подготовиться к экзамену.
         </p>
         <div className="hero-actions">
-          <a className="button primary" href="#lead">
+          <a className="button primary" href="#schedule">
             <CalendarCheck size={20} aria-hidden="true" />
             Записаться на пробный урок
           </a>
@@ -235,7 +243,7 @@ function Courses() {
                   </li>
                 ))}
               </ul>
-              <a className="button secondary" href="#lead">
+              <a className="button secondary" href="#schedule">
                 Выбрать курс
                 <ArrowRight size={18} aria-hidden="true" />
               </a>
@@ -253,18 +261,21 @@ function Process() {
       <div className="container two-column process-layout">
         <div>
           <p className="section-kicker">Как проходит обучение</p>
-          <h2 id="process-title">От пробного урока до понятного плана</h2>
+          <h2 id="process-title">Как проходит подготовка в Lamarum</h2>
           <p className="section-lead">
-            Сначала разбираемся в ситуации ученика, а потом ведём подготовку по шагам: теория,
-            практика, ошибки, повторение.
+            Сначала разбираемся в ситуации ученика, а потом ведём подготовку по шагам: от
+            диагностики до пробных вариантов и повторения.
           </p>
           <LlamaIllustration variant="mic" label="Лама-преподаватель с наушниками и микрофоном" />
         </div>
         <ol className="steps-list">
           {steps.map((step, index) => (
-            <li key={step}>
+            <li key={step.title}>
               <span>{String(index + 1).padStart(2, "0")}</span>
-              <p>{step}</p>
+              <div>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
+              </div>
             </li>
           ))}
         </ol>
@@ -279,15 +290,70 @@ function Program() {
       <div className="container">
         <div className="section-heading inverted">
           <p className="section-kicker">Программа подготовки</p>
-          <h2 id="program-title">Темы, которые нужны для уверенного решения задач</h2>
+          <h2 id="program-title">План подготовки к ОГЭ</h2>
           <p>
-            Без привязки к номерам заданий: программа остаётся понятной и не устаревает при
-            изменениях формата.
+            Движемся по дорожной карте: сначала диагностика и база, затем задания, компьютерная
+            часть, пробники и финальное повторение.
           </p>
         </div>
-        <div className="topic-grid">
-          {programTopics.map((topic) => (
-            <span key={topic}>{topic}</span>
+        <ol className="roadmap-list">
+          {preparationRoadmap.map((stage, index) => (
+            <li key={stage}>
+              <span>Этап {index + 1}</span>
+              <h3>{stage}</h3>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+function ExamTopics() {
+  return (
+    <section id="topics" className="section" aria-labelledby="topics-title">
+      <div className="container">
+        <div className="section-heading">
+          <p className="section-kicker">Что изучаем</p>
+          <h2 id="topics-title">Что изучаем на ОГЭ по информатике</h2>
+          <p>Темы сгруппированы так, чтобы родителю было понятно, зачем нужен каждый блок.</p>
+        </div>
+        <div className="exam-topic-grid">
+          {examTopics.map((topic, index) => {
+            const icons = [Laptop, BookOpen, ListChecks, FileText];
+            const Icon = icons[index];
+
+            return (
+              <article className="exam-topic-card" key={topic.title}>
+                <Icon size={24} aria-hidden="true" />
+                <span>{topic.tasks}</span>
+                <h3>{topic.title}</h3>
+                <p>{topic.text}</p>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function OgeUpdate() {
+  return (
+    <section className="section section-soft oge-update-section" aria-labelledby="oge-update-title">
+      <div className="container oge-update">
+        <div>
+          <p className="section-kicker">Актуально для ОГЭ-2026</p>
+          <h2 id="oge-update-title">Формат экзамена держим в фокусе</h2>
+          <p>
+            В 2026 году структура ОГЭ по информатике сохраняет 16 заданий. Особое внимание уделяем
+            компьютерной части: файлам, таблицам, презентациям, текстовым документам, алгоритмам и
+            программированию.
+          </p>
+        </div>
+        <div className="format-list" aria-label="Актуальные форматы файлов">
+          {ogeFormats.map((format) => (
+            <span key={format}>{format}</span>
           ))}
         </div>
       </div>
@@ -324,6 +390,257 @@ function Why() {
   );
 }
 
+function formatSlotDate(date) {
+  const plainDate = parsePlainDate(date);
+
+  return new Intl.DateTimeFormat("ru-RU", {
+    day: "numeric",
+    month: "long",
+  }).format(new Date(plainDate.year, plainDate.month - 1, plainDate.day, 12, 0, 0));
+}
+
+function parsePlainDate(value) {
+  const [year, month, day] = String(value).slice(0, 10).split("-").map(Number);
+
+  return { year, month, day };
+}
+
+function SlotStatus({ status }) {
+  const isAvailable = status === "available";
+
+  return <span className={isAvailable ? "slot-status available" : "slot-status booked"}>{isAvailable ? "Свободно" : "Занято"}</span>;
+}
+
+function TrialSchedule() {
+  const [slots, setSlots] = useState([]);
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [scheduleMessage, setScheduleMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadSchedule() {
+      try {
+        const response = await fetch("/api/schedule");
+        const result = await response.json().catch(() => ({}));
+
+        if (!response.ok || !Array.isArray(result.slots)) {
+          throw new Error(result.message || scheduleUnavailableMessage);
+        }
+
+        if (isMounted) {
+          setSlots(result.slots);
+          setScheduleMessage(
+            result.slots.length > 0 ? "" : "Сейчас нет открытых слотов. Можно записаться через Telegram",
+          );
+        }
+      } catch (error) {
+        if (isMounted) {
+          setSlots([]);
+          setScheduleMessage(error.message?.includes("Расписание") ? error.message : scheduleUnavailableMessage);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    loadSchedule();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  function handleSelectSlot(slot) {
+    setSelectedSlot(slot);
+    setScheduleMessage("");
+  }
+
+  function handleBookingSuccess(slotId) {
+    setSlots((currentSlots) =>
+      currentSlots.map((slot) => (slot.id === slotId ? { ...slot, status: "booked" } : slot)),
+    );
+    setSelectedSlot(null);
+    setScheduleMessage("Спасибо! Заявка принята. Я свяжусь с вами для подтверждения времени.");
+  }
+
+  return (
+    <section id="schedule" className="section schedule-section" aria-labelledby="schedule-title">
+      <div className="container">
+        <div className="section-heading">
+          <p className="section-kicker">Пробный урок</p>
+          <h2 id="schedule-title">Выберите удобное время для пробного урока</h2>
+          <p>
+            Выберите свободный слот, заполните короткую анкету, и я подтвержу время в Telegram или
+            по телефону.
+          </p>
+        </div>
+
+        <div className="schedule-layout">
+          <div className="slot-list" aria-busy={isLoading ? "true" : "false"}>
+            {!isLoading && slots.length === 0 && (
+              <div className="schedule-unavailable">
+                <ShieldCheck size={28} aria-hidden="true" />
+                <h3>Расписание временно недоступно</h3>
+                <p>{scheduleUnavailableMessage}</p>
+                <a className="button secondary" href="https://t.me/ruslannzz" target="_blank" rel="noreferrer">
+                  Написать в Telegram
+                  <ArrowRight size={18} aria-hidden="true" />
+                </a>
+              </div>
+            )}
+            {slots.map((slot) => {
+              const isAvailable = slot.status === "available";
+              const isSelected = selectedSlot?.id === slot.id;
+
+              return (
+                <article className={isSelected ? "slot-card selected" : "slot-card"} key={slot.id}>
+                  <div className="slot-date">
+                    <CalendarDays size={22} aria-hidden="true" />
+                    <div>
+                      <strong>{slot.weekday}</strong>
+                      <span>{formatSlotDate(slot.date)}</span>
+                    </div>
+                  </div>
+                  <div className="slot-time">
+                    <Clock3 size={20} aria-hidden="true" />
+                    <span>{slot.time}</span>
+                  </div>
+                  <SlotStatus status={slot.status} />
+                  <button
+                    className="button secondary"
+                    type="button"
+                    disabled={!isAvailable}
+                    onClick={() => handleSelectSlot(slot)}
+                  >
+                    {isAvailable ? "Записаться" : "Слот занят"}
+                    <ArrowRight size={18} aria-hidden="true" />
+                  </button>
+                </article>
+              );
+            })}
+          </div>
+
+          <div className="booking-panel" id="booking-form">
+            {scheduleMessage && <p className="form-status">{scheduleMessage}</p>}
+            {selectedSlot ? (
+              <BookingForm selectedSlot={selectedSlot} onSuccess={handleBookingSuccess} />
+            ) : (
+              <div className="booking-placeholder">
+                <ShieldCheck size={30} aria-hidden="true" />
+                <h3>Форма откроется после выбора слота</h3>
+                <p>Нужны имя родителя, имя ученика, класс, контакт и согласие на обработку данных.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function BookingForm({ selectedSlot, onSuccess }) {
+  const [status, setStatus] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const formData = Object.fromEntries(new FormData(form).entries());
+    const payload = {
+      ...formData,
+      consent: formData.consent === "on",
+      slotId: selectedSlot.id,
+    };
+
+    setIsSubmitting(true);
+    setStatus("");
+
+    try {
+      const response = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        setStatus(result.message || "Не удалось отправить запись. Попробуйте ещё раз позже.");
+        return;
+      }
+
+      form.reset();
+      onSuccess(selectedSlot.id);
+    } catch {
+      setStatus("Не удалось отправить запись. Попробуйте ещё раз позже.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  return (
+    <form className="booking-form" onSubmit={handleSubmit}>
+      <label>
+        Выбранный слот
+        <input name="selectedSlot" type="text" value={selectedSlot.label} readOnly required />
+      </label>
+      <label>
+        Имя родителя
+        <input name="parentName" type="text" minLength="2" maxLength="80" placeholder="Как к вам обращаться" required />
+      </label>
+      <label>
+        Имя ученика
+        <input name="studentName" type="text" minLength="2" maxLength="80" placeholder="Имя ученика" required />
+      </label>
+      <label>
+        Класс ученика
+        <select name="grade" defaultValue="" required>
+          <option value="" disabled>
+            Выберите класс
+          </option>
+          <option>8 класс</option>
+          <option>9 класс</option>
+          <option>Другой класс</option>
+        </select>
+      </label>
+      <label>
+        Telegram или телефон
+        <input name="contact" type="text" minLength="3" maxLength="80" placeholder="@username или телефон" required />
+      </label>
+      <label>
+        Цель обучения
+        <textarea name="goal" rows="3" maxLength="1000" placeholder="Например: подтянуть базу, подготовиться к ОГЭ, перестать бояться задач" />
+      </label>
+      <label>
+        Комментарий
+        <textarea name="comment" rows="3" maxLength="1000" placeholder="Что важно знать перед пробным уроком?" />
+      </label>
+      <label className="consent-field">
+        <input name="consent" type="checkbox" required />
+        <span>
+          Я согласен(на) на обработку персональных данных и подтверждаю, что являюсь родителем или
+          законным представителем ученика.{" "}
+          <a href="/privacy.html" target="_blank" rel="noreferrer">
+            Политика конфиденциальности
+          </a>
+        </span>
+      </label>
+      <label className="hp-field" aria-hidden="true">
+        Сайт
+        <input name="website" type="text" tabIndex="-1" autoComplete="off" />
+      </label>
+      <button className="button primary" type="submit" disabled={isSubmitting}>
+        <Send size={20} aria-hidden="true" />
+        {isSubmitting ? "Отправляем..." : "Отправить запись"}
+      </button>
+      {status && <p className="form-status error">{status}</p>}
+    </form>
+  );
+}
+
 function Prices() {
   return (
     <section id="prices" className="section section-soft" aria-labelledby="prices-title">
@@ -340,7 +657,7 @@ function Prices() {
               <h3>{price.title}</h3>
               <p className="price">{price.price}</p>
               <p>{price.text}</p>
-              <a className="button secondary" href="#lead">
+              <a className="button secondary" href="#schedule">
                 Записаться
                 <ArrowRight size={18} aria-hidden="true" />
               </a>
@@ -364,8 +681,18 @@ function Reviews() {
           {reviews.map((review) => (
             <article className="review-card" key={review.name}>
               <MessageCircle size={24} aria-hidden="true" />
-              <p>“{review.text}”</p>
               <strong>{review.name}</strong>
+              <dl>
+                <div>
+                  <dt>Цель</dt>
+                  <dd>{review.goal}</dd>
+                </div>
+                <div>
+                  <dt>Результат</dt>
+                  <dd>{review.result}</dd>
+                </div>
+              </dl>
+              <p>“{review.text}”</p>
             </article>
           ))}
         </div>
@@ -396,102 +723,6 @@ function Faq() {
             </details>
           ))}
         </div>
-      </div>
-    </section>
-  );
-}
-
-function LeadForm() {
-  const [status, setStatus] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  async function handleSubmit(event) {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const formData = Object.fromEntries(new FormData(form).entries());
-    setIsSubmitting(true);
-    setStatus("");
-
-    try {
-      const response = await fetch("/api/lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      const result = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        setStatus(result.message || "Не удалось отправить заявку. Попробуйте ещё раз позже.");
-        return;
-      }
-
-      setStatus("Заявка отправлена. Мы скоро свяжемся с вами в Telegram.");
-      form.reset();
-    } catch {
-      setStatus("Не удалось отправить заявку. Попробуйте ещё раз позже.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  }
-
-  return (
-    <section id="lead" className="section lead-section" aria-labelledby="lead-title">
-      <div className="container lead-layout">
-        <div className="lead-copy">
-          <p className="section-kicker">Пробный урок</p>
-          <h2 id="lead-title">Запишитесь на пробный урок</h2>
-          <p>
-            Познакомимся, определим уровень ученика и покажем, как будет выглядеть подготовка.
-          </p>
-          <div className="lead-note">
-            <ClipboardCheck size={22} aria-hidden="true" />
-            <span>После занятия вы получите понятные рекомендации по дальнейшей подготовке.</span>
-          </div>
-          <a className="telegram-link" href="https://t.me/ruslannzz" target="_blank" rel="noreferrer">
-            Написать в Telegram: @ruslannzz
-          </a>
-        </div>
-        <form className="lead-form" onSubmit={handleSubmit}>
-          <label>
-            Имя
-            <input name="name" type="text" minLength="2" maxLength="60" placeholder="Как к вам обращаться" required />
-          </label>
-          <label>
-            Telegram для связи
-            <input name="contact" type="text" minLength="3" maxLength="80" placeholder="@username" required />
-          </label>
-          <label>
-            Класс ученика
-            <select name="grade" defaultValue="" required>
-              <option value="" disabled>
-                Выберите класс
-              </option>
-              <option>8 класс</option>
-              <option>9 класс</option>
-              <option>Другой класс</option>
-            </select>
-          </label>
-          <label>
-            Цель обучения
-            <textarea
-              name="goal"
-              rows="4"
-              minLength="2"
-              maxLength="1000"
-              placeholder="Что хотите улучшить или к какому результату прийти?"
-              required
-            />
-          </label>
-          <label className="hp-field" aria-hidden="true">
-            Сайт
-            <input name="website" type="text" tabIndex="-1" autoComplete="off" />
-          </label>
-          <button className="button primary" type="submit" disabled={isSubmitting}>
-            <Send size={20} aria-hidden="true" />
-            {isSubmitting ? "Отправляем..." : "Отправить заявку"}
-          </button>
-          {status && <p className="form-status">{status}</p>}
-        </form>
       </div>
     </section>
   );
@@ -529,11 +760,13 @@ export default function App() {
         <Courses />
         <Process />
         <Program />
+        <ExamTopics />
+        <OgeUpdate />
+        <TrialSchedule />
         <Why />
         <Prices />
         <Reviews />
         <Faq />
-        <LeadForm />
       </main>
       <Footer />
     </>
