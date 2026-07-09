@@ -11,7 +11,9 @@ DATABASE_URL=postgresql://postgres:password@localhost:5432/lamarum
 TELEGRAM_BOT_TOKEN=your_telegram_bot_token_here
 TELEGRAM_CHAT_ID=your_telegram_chat_id_here
 ADMIN_PASSWORD=use_a_long_random_password_here
-ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173,https://your-domain.ru
+ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173,https://lamarum-site.onrender.com
+PGSSLROOTCERT=C:/Users/Ruslan/.cloud-certs/root.crt
+# DB_SSL_REJECT_UNAUTHORIZED=false
 NODE_ENV=production
 PORT=3000
 ```
@@ -20,8 +22,12 @@ PORT=3000
 - `TELEGRAM_BOT_TOKEN` и `TELEGRAM_CHAT_ID` — данные для уведомлений.
 - `ADMIN_PASSWORD` — длинный случайный пароль для `/admin`; логин всегда `admin`.
 - `ALLOWED_ORIGINS` — разрешённые дополнительные origin для API.
+- `PGSSLROOTCERT` — путь к CA-сертификату PostgreSQL, например сертификату Timeweb.
+- `DB_SSL_REJECT_UNAUTHORIZED=false` — только для локальной диагностики SSL, если нужно временно отключить проверку сертификата.
 
 Не загружайте `.env` в GitHub.
+
+Если `DATABASE_URL` не задан, сервер всё равно отдаёт главную страницу. Расписание и формы, которым нужна база, покажут понятное сообщение о временной недоступности, а `/admin/schedule` ответит: `База данных не настроена`.
 
 ## Запуск
 
@@ -31,7 +37,7 @@ npm.cmd run build
 npm.cmd start
 ```
 
-При запуске сервер автоматически создаёт таблицу `applications` и индекс по дате:
+При запуске сервер автоматически создаёт таблицы `applications`, `schedule_slots`, `trial_bookings` и индексы по дате. Полная схема находится в `db.mjs`; базовая таблица прежних заявок выглядит так:
 
 ```sql
 CREATE TABLE applications (
@@ -47,22 +53,35 @@ CREATE TABLE applications (
 
 ## Как работает заявка
 
-Форма отправляет `POST /api/lead`. Сервер:
+Новая форма записи на пробный урок отправляет `POST /api/bookings`. Сервер:
 
 1. Проверяет обязательные поля и длину текста.
 2. Применяет rate limit: не более 5 попыток с одного IP за 10 минут.
 3. Отсекает простых ботов через скрытое honeypot-поле.
-4. Сохраняет заявку в PostgreSQL.
-5. Пытается отправить Telegram-уведомление.
+4. Проверяет, что выбранный слот существует и свободен.
+5. Сохраняет запись в PostgreSQL и переводит слот в статус `booked`.
+6. Пытается отправить Telegram-уведомление.
 
-Если Telegram недоступен, сохранённая заявка не теряется, а форма всё равно получает успешный ответ. Ошибки PostgreSQL логируются только на сервере; пользователю возвращается общее безопасное сообщение.
+Если Telegram недоступен, сохранённая запись не теряется, а форма всё равно получает успешный ответ. Ошибки PostgreSQL логируются только на сервере; пользователю возвращается общее безопасное сообщение.
+
+Старый endpoint `POST /api/lead` оставлен для совместимости с прежней формой заявки.
+
+## Расписание
+
+Публичное расписание загружается через:
+
+```text
+GET /api/schedule
+```
+
+Если таблица слотов пустая, при первом запуске сервер добавит несколько ближайших свободных слотов-заготовок. Дальше расписанием удобнее управлять из админки.
 
 ## Админ-страница
 
 Откройте:
 
 ```text
-http://localhost:3000/admin
+http://localhost:3000/admin/schedule
 ```
 
 Браузер запросит Basic Auth:
@@ -72,7 +91,7 @@ http://localhost:3000/admin
 Пароль: значение ADMIN_PASSWORD
 ```
 
-Страница показывает последние 200 заявок и запрещает кеширование.
+Страница показывает все слоты, позволяет добавить слот, удалить слот, переключить статус `свободно / занято`, посмотреть записи на пробный урок и заявки со старой формы. Кеширование запрещено.
 
 ## Деплой
 

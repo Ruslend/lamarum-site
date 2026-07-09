@@ -450,7 +450,9 @@ svg {
 .price-card,
 .review-card,
 .faq-item,
-.lead-form {
+.lead-form,
+.booking-form,
+.booking-placeholder {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--white);
@@ -655,8 +657,13 @@ svg {
 .steps-list p {
   margin: 0;
   color: var(--navy);
-  font-size: 1.04rem;
-  font-weight: 750;
+  line-height: 1.55;
+}
+
+.steps-list h3 {
+  margin: 0 0 5px;
+  color: var(--navy);
+  font-size: 1.08rem;
 }
 
 .topic-grid {
@@ -675,6 +682,142 @@ svg {
   background: rgba(255, 255, 255, 0.08);
   color: var(--white);
   font-weight: 760;
+}
+
+.roadmap-list {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.roadmap-list::before {
+  position: absolute;
+  top: 26px;
+  right: 7%;
+  left: 7%;
+  height: 3px;
+  content: "";
+  background: linear-gradient(90deg, var(--warm), var(--mint), var(--green));
+}
+
+.roadmap-list li {
+  position: relative;
+  min-height: 152px;
+  padding: 58px 16px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.roadmap-list li::before {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 23px;
+  height: 23px;
+  border: 4px solid var(--navy-deep);
+  border-radius: 50%;
+  content: "";
+  background: var(--green);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.16);
+}
+
+.roadmap-list span {
+  color: var(--green);
+  font-size: 0.78rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.roadmap-list h3 {
+  margin: 10px 0 0;
+  color: var(--white);
+  font-size: 1.02rem;
+  line-height: 1.3;
+}
+
+.exam-topic-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.exam-topic-card {
+  min-height: 266px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: 0 12px 28px rgba(16, 36, 63, 0.08);
+}
+
+.exam-topic-card svg {
+  color: #159783;
+}
+
+.exam-topic-card span {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 30px;
+  align-items: center;
+  margin-top: 18px;
+  padding: 0 10px;
+  border-radius: var(--radius);
+  background: var(--mint-soft);
+  color: var(--navy);
+  font-size: 0.82rem;
+  font-weight: 850;
+}
+
+.exam-topic-card h3 {
+  margin: 18px 0 10px;
+  color: var(--navy);
+  font-size: 1.14rem;
+}
+
+.exam-topic-card p,
+.oge-update p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.oge-update {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 28px;
+  align-items: center;
+  padding: 30px;
+  border: 1px solid rgba(21, 151, 131, 0.22);
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: 0 14px 34px rgba(16, 36, 63, 0.08);
+}
+
+.oge-update h2 {
+  margin-bottom: 16px;
+}
+
+.format-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(86px, 1fr));
+  gap: 10px;
+}
+
+.format-list span {
+  display: grid;
+  place-items: center;
+  min-height: 54px;
+  padding: 0 14px;
+  border-radius: var(--radius);
+  background: var(--navy);
+  color: var(--white);
+  font-size: 1.02rem;
+  font-weight: 900;
 }
 
 .why-layout {
@@ -726,8 +869,227 @@ svg {
   background: var(--warm);
 }
 
+.schedule-section {
+  background:
+    linear-gradient(180deg, rgba(237, 246, 251, 0.82), rgba(255, 253, 248, 0.95)),
+    #fffdf8;
+}
+
+.schedule-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(340px, 0.9fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.slot-list {
+  display: grid;
+  gap: 14px;
+}
+
+.slot-card {
+  display: grid;
+  grid-template-columns: minmax(210px, 1fr) auto auto minmax(150px, auto);
+  gap: 14px;
+  align-items: center;
+  min-height: 96px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: 0 12px 28px rgba(16, 36, 63, 0.08);
+}
+
+.slot-card.selected {
+  border-color: rgba(21, 151, 131, 0.55);
+  box-shadow: 0 16px 34px rgba(21, 151, 131, 0.14);
+}
+
+.slot-date,
+.slot-time {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: var(--navy);
+}
+
+.slot-date svg,
+.slot-time svg {
+  flex: 0 0 auto;
+  color: #159783;
+}
+
+.slot-date strong {
+  display: block;
+  font-size: 1.04rem;
+}
+
+.slot-date span {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.slot-time span {
+  font-size: 1.12rem;
+  font-weight: 900;
+}
+
+.slot-status {
+  display: inline-flex;
+  justify-content: center;
+  min-width: 92px;
+  min-height: 32px;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: var(--radius);
+  font-size: 0.86rem;
+  font-weight: 850;
+}
+
+.slot-status.available {
+  background: var(--mint-soft);
+  color: #126d60;
+}
+
+.slot-status.booked {
+  background: #fde8df;
+  color: #8d2c13;
+}
+
+.slot-card .button {
+  min-height: 44px;
+  width: 100%;
+  padding: 0 14px;
+}
+
+.booking-panel {
+  position: sticky;
+  top: 96px;
+  display: grid;
+  gap: 14px;
+}
+
+.booking-placeholder {
+  display: grid;
+  place-items: start;
+  min-height: 246px;
+  padding: 26px;
+}
+
+.schedule-unavailable {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  min-height: 232px;
+  padding: 26px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: 0 12px 28px rgba(16, 36, 63, 0.08);
+}
+
+.schedule-unavailable svg,
+.booking-placeholder svg {
+  color: #159783;
+}
+
+.schedule-unavailable h3,
+.booking-placeholder h3 {
+  margin: 18px 0 8px;
+  color: var(--navy);
+  font-size: 1.32rem;
+}
+
+.schedule-unavailable p,
+.booking-placeholder p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.schedule-unavailable .button {
+  width: fit-content;
+  margin-top: 6px;
+}
+
+.booking-form {
+  display: grid;
+  gap: 15px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+
+.booking-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--navy);
+  font-weight: 800;
+}
+
+.booking-form input,
+.booking-form select,
+.booking-form textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fbfdfe;
+  color: var(--ink);
+  outline: 0;
+}
+
+.booking-form input,
+.booking-form select {
+  min-height: 50px;
+  padding: 0 14px;
+}
+
+.booking-form textarea {
+  resize: vertical;
+  min-height: 96px;
+  padding: 14px;
+}
+
+.booking-form input:focus,
+.booking-form select:focus,
+.booking-form textarea:focus {
+  border-color: #159783;
+  box-shadow: 0 0 0 4px rgba(145, 234, 211, 0.35);
+}
+
+.booking-form input[readonly] {
+  background: var(--mint-soft);
+  color: var(--navy);
+  font-weight: 800;
+}
+
+.consent-field {
+  grid-template-columns: 20px 1fr;
+  align-items: start;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.consent-field input {
+  width: 18px;
+  min-height: 18px;
+  margin-top: 2px;
+  accent-color: #159783;
+}
+
+.consent-field a {
+  color: #126d60;
+  font-weight: 850;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .review-card {
-  min-height: 256px;
+  min-height: 314px;
   padding: 24px;
 }
 
@@ -738,6 +1100,31 @@ svg {
 
 .review-card strong {
   color: var(--navy);
+}
+
+.review-card dl {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.review-card dl div {
+  padding: 12px;
+  border-radius: var(--radius);
+  background: #f7fbf8;
+}
+
+.review-card dt {
+  color: #126d60;
+  font-size: 0.78rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.review-card dd {
+  margin: 4px 0 0;
+  color: var(--navy);
+  font-weight: 760;
 }
 
 .faq-layout {
@@ -899,6 +1286,11 @@ svg {
   font-weight: 800;
 }
 
+.form-status.error {
+  background: #fde8df;
+  color: #8d2c13;
+}
+
 .site-footer {
   padding: 34px 0;
   background: #050d18;
@@ -962,6 +1354,19 @@ address a {
   .topic-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+
+  .roadmap-list,
+  .exam-topic-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .roadmap-list::before {
+    display: none;
+  }
+
+  .slot-card {
+    grid-template-columns: minmax(220px, 1fr) auto;
+  }
 }
 
 @media (max-width: 920px) {
@@ -980,12 +1385,14 @@ address a {
 
   .benefits-grid,
   .audience-grid,
-  .course-grid,
-  .price-grid,
-  .review-grid,
-  .two-column,
-  .why-layout,
-  .faq-layout,
+    .course-grid,
+    .price-grid,
+    .review-grid,
+    .schedule-layout,
+    .oge-update,
+    .two-column,
+    .why-layout,
+    .faq-layout,
   .lead-layout,
   .footer-grid {
     grid-template-columns: 1fr;
@@ -1002,8 +1409,13 @@ address a {
 
   .course-card,
   .price-card,
-  .review-card {
+  .review-card,
+  .exam-topic-card {
     min-height: auto;
+  }
+
+  .booking-panel {
+    position: static;
   }
 
   .footer-grid,
@@ -1044,11 +1456,24 @@ address a {
     width: 100%;
   }
 
-  .benefits-grid,
-  .audience-grid,
-  .reason-grid,
-  .topic-grid {
+    .benefits-grid,
+    .audience-grid,
+    .reason-grid,
+  .topic-grid,
+  .roadmap-list,
+  .exam-topic-grid,
+  .format-list {
     grid-template-columns: 1fr;
+  }
+
+  .slot-card {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .slot-status {
+    justify-content: flex-start;
+    width: fit-content;
   }
 
   .benefit-item,
