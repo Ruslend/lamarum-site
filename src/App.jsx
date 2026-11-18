@@ -20,7 +20,6 @@ import {
   Sparkles,
   Target,
 } from "lucide-react";
-import founderLlamaBg from "./assets/founder-llama-bg.jpg";
 import {
   audiences,
   benefits,
@@ -42,13 +41,7 @@ const scheduleUnavailableMessage = "Расписание временно нед
 function LogoMark({ compact = false }) {
   return (
     <span className={compact ? "logo-mark compact" : "logo-mark"} aria-hidden="true">
-      <svg viewBox="0 0 64 64" role="img">
-        <path d="M20 25 16 9c-.7-2.6 2.7-4.2 4.4-2.1l9.2 11.5h5L45 7c1.8-2 5.1-.2 4.2 2.4L44 25" />
-        <path d="M18 29c0-9 6.2-15 14-15s14 6 14 15v7c0 10-6.3 17-14 17S18 46 18 36v-7Z" />
-        <path d="M22 36h20M25 29h5m4 0h5" />
-        <path d="M25 43c4 3 10 3 14 0" />
-        <path d="M23 30c2-3 6-3 8-.5M33 29.5c2-2.5 6-2.5 8 .5" />
-      </svg>
+      <span className="brand-emblem" />
     </span>
   );
 }
@@ -100,7 +93,7 @@ function Header() {
     <header className="site-header">
       <a className="brand" href="#home" aria-label="Ламарум, на главную">
         <LogoMark compact />
-        <span>Ламарум</span>
+        <span>LAMARUM</span>
       </a>
 
       <nav className="desktop-nav" aria-label="Основная навигация">
@@ -138,32 +131,58 @@ function Header() {
 function Hero() {
   return (
     <section id="home" className="hero-section">
-      <img className="hero-photo" src={founderLlamaBg} alt="Основатель Ламарум рядом с ламами" />
       <div className="hero-shade" aria-hidden="true" />
       <div className="container hero-content">
-        <p className="eyebrow">
-          <Sparkles size={18} aria-hidden="true" />
-          Живая онлайн-школа Ламарум
-        </p>
-        <h1>Подготовка к ОГЭ по информатике простым языком</h1>
-        <p className="hero-lead">
-          Школа Ламарум помогает ученикам 8-9 классов разобраться в информатике, закрыть пробелы
-          и уверенно подготовиться к экзамену.
-        </p>
-        <div className="hero-actions">
-          <a className="button primary" href="#schedule">
-            <CalendarCheck size={20} aria-hidden="true" />
-            Записаться на пробный урок
-          </a>
-          <a className="button ghost" href="#courses">
-            <BookOpen size={20} aria-hidden="true" />
-            Посмотреть курсы
-          </a>
+        <div className="hero-copy">
+          <p className="eyebrow">
+            <Sparkles size={18} aria-hidden="true" />
+            LAMARUM · ОНЛАЙН-ШКОЛА ИНФОРМАТИКИ
+          </p>
+          <h1>Информатика <span className="text-gold">с пониманием.</span> Не с зубрёжкой.</h1>
+          <p className="hero-lead">
+            Подготовка к ОГЭ-2027 и помощь по школьной программе для 7–9 классов.
+            Объясняем сложное простыми словами, шаг за шагом.
+          </p>
+          <div className="hero-actions">
+            <a className="button primary" href="#schedule">
+              <CalendarCheck size={20} aria-hidden="true" />
+              Записаться на пробный урок
+            </a>
+            <a className="button ghost" href="#process">
+              <BookOpen size={20} aria-hidden="true" />
+              Как проходит обучение
+            </a>
+          </div>
+          <div className="hero-facts" aria-label="Основные направления">
+            <span>7–9 классы</span>
+            <span>ОГЭ-2027</span>
+            <span>Индивидуальный подход</span>
+          </div>
         </div>
-        <div className="hero-facts" aria-label="Ключевые факты">
-          <span>8-9 класс</span>
-          <span>Онлайн</span>
-          <span>План подготовки</span>
+        <div className="hero-visual" aria-label="Визуальная схема подхода LAMARUM">
+          <div className="hero-visual-top">
+            <span>ОБРАЗОВАТЕЛЬНАЯ СИСТЕМА</span>
+            <span className="hero-visual-status">LAMARUM / 2027</span>
+          </div>
+          <div className="hero-mark-stage">
+            <LogoMark />
+            <div>
+              <strong>Понимание начинается с первого шага.</strong>
+              <span>Логика. Система. Практика.</span>
+            </div>
+          </div>
+          <div className="hero-learning-flow">
+            <span><b>01</b> Диагностика</span>
+            <ArrowRight size={17} aria-hidden="true" />
+            <span><b>02</b> Объяснение</span>
+            <ArrowRight size={17} aria-hidden="true" />
+            <span><b>03</b> Практика</span>
+          </div>
+          <div className="hero-mini-demo">
+            <span className="hero-mini-label">КАК ОБЪЯСНЯЕМ</span>
+            <strong>I = K × i</strong>
+            <p>Сначала понимаем, что означает каждое число. Только потом вычисляем.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -735,7 +754,7 @@ function Footer() {
         <div>
           <a className="brand footer-brand" href="#home">
             <LogoMark compact />
-            <span>Ламарум</span>
+            <span>LAMARUM</span>
           </a>
           <p>Подготовка к ОГЭ по информатике</p>
         </div>
