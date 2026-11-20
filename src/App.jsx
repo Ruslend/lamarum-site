@@ -1,5 +1,7 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
+import brandMark from "./assets/brand/mark.svg?no-inline";
+import brandPlate from "./assets/brand/plate.svg?no-inline";
 import Schedule from "./Schedule.jsx";
 import { prices } from "./data.js";
 function Header() {
@@ -26,7 +28,7 @@ function Header() {
     <header id="top">
       <div className="wrap header-row">
         <a className="brand" href="#top" aria-label="LAMARUM, в начало">
-          <img width="42" height="42" src="/brand/mark.svg" alt="" />
+          <img width="42" height="42" src={brandMark} alt="" />
           <span>LAMARUM</span>
         </a>
         <nav className="desktop-nav" aria-label="Основная навигация">
@@ -120,7 +122,7 @@ function Hero() {
         <figure className="hero-plate">
           <img
             fetchPriority="high"
-            src="/brand/plate.svg"
+            src={brandPlate}
             width="600"
             height="440"
             alt="Фирменная лама с дорожками электронной схемы на чертёжной сетке"
@@ -478,7 +480,7 @@ export default function App() {
       <footer id="contacts">
         <div className="wrap footer-inner">
           <a className="brand" href="#top" aria-label="LAMARUM, в начало">
-            <img width="42" height="42" src="/brand/mark.svg" alt="" />
+            <img width="42" height="42" src={brandMark} alt="" />
             <span>LAMARUM</span>
           </a>
           <address>

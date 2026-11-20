@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - codex/release-5874944
+      - codex/release-lenovo-assets
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
